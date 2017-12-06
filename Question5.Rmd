@@ -5,7 +5,7 @@ date: "12/6/2017"
 output: pdf_document
 ---
 
-```{r}
+```{r set_up}
 require(mosaic)
 load("obs_data.Rda")
 ```  
@@ -14,7 +14,7 @@ load("obs_data.Rda")
 
 $$\Psi^{un} = E_0(Y|A=1) - E_0(Y|A=0)$$
 
-```{r}  
+```{r unadjusted}  
 obs.gcomp <- obs.data[complete.cases(obs.data),]
 a0 <- filter(obs.gcomp, PhysActive == 0)
 a1 <- filter(obs.gcomp, PhysActive == 1)
@@ -36,13 +36,9 @@ We need to condition on $W_d$, $W_h$, and $W_l$ in order for the backdoor criter
 ##"Saturated" Regression Implementation
 
 
-```{r}
-psi.P0 <- (mean(obs.gcomp$SleepTrouble[obs.gcomp$PhysActive == "1" & obs.data$Gender == "female" & obs.gcomp$HardDrugs == "Yes" & obs.gcomp$HealthGen == "Excellent"]))
-```
 
 
-
-```{r}
+```{r models}
 saturated <- glm(SleepTrouble ~ PhysActive + Age + Gender + Race1 + Education + MaritalStatus + HHIncomeMid + HomeOwn +
       HealthGen + DaysPhysHlthBad + DaysMentHlthBad + LittleInterest + Depressed + TVHrsDay + 
       CompHrsDay + AlcoholDay + SmokeNow + RegularMarij + HardDrugs, 
@@ -56,7 +52,7 @@ summary(less_saturated)
 
 ```
 
-```{r}
+```{r iteration_1}
 txt <- mutate(obs.gcomp, PhysActive = "1")
 control <- mutate(obs.gcomp, PhysActive = "0")
 
@@ -66,7 +62,7 @@ obs.gcomp <- mutate(obs.gcomp, txt = predict.txt, control = predict.control)
 mean(predict.txt - predict.control)
 ```
 
-```{r}
+```{r interations_500}
 R <- 500
 n <- 200
 
