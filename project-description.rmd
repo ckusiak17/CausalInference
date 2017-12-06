@@ -1,0 +1,103 @@
+---
+title: "BIOSTAT 690B - Project Description"
+author: | 
+  | Coco Kusiak
+  | Hachem Saddiki
+  | Krishna Vemuri
+date: "November 8, 2017"
+output: pdf_document
+---
+
+
+# Scientific Question
+
+Among adults aged 20 years or older, how does participating in moderate or vigorous-intensity sports, fitness or recreational activities affect sleep?
+
+# Target Causal Parameter
+
+The difference in counterfactual risk of reporting disturbed or troubled sleep patterns among adults (20 years or older) participating in vigorous or moderate activities, compared to the same adults not participating in such activities.
+
+# Description of the Observed Data
+
+## Exposure
+
+- `PhysActive`: is a binary variable ($Yes=1$, $No=0$) representing whether the participant does moderate or vigorous-intensity sports, fitness or recreational activities.
+
+## Outcome
+
+- `SleepTrouble`: is a binary variable ($Yes=1$, $No=0$) representing whether the participant has reported having trouble sleeping to a healthcare professional.
+
+## Covariates
+
+### Demographic Covariates
+
+1. `Gender`: is a binary variable ($Female=0$, $Male=1$) representing the gender of the participant.
+2. `Age`: is a numeric variable representing the age in years at screening of study participant. Note that we do not consider participants younger than $20$, and participants older than $80$ were recorded as $80$.
+3. `Race1`: categorical variable representing the reported race of participant: `Mexican`, `Hispanic`, `White`, `Black`,`Other`.
+4. `Education`: categorical variable representing the reported educational level of study participant: `8thGrade`, `9-11Grade`, `HighSchool`, `SomeCollege`, `CollegeGrad`.
+5. `MaritalStatus`: categorical variable representing the reported marital status of study participant: `Married`, `Widowed`, `Divorced`, `Separated`, `NeverMarried`, `LivePartner`.
+6. `HHIncomeMid`: numeric variable representing the median of reported income category of study participant.
+7. `HomeOwn`: categorical variable representing whether the home of study participant is owned, rented or occupied by some other arrangement: `Home`, `Rent`, `Other`.
+
+### Health Covariates
+
+8. `HealthGen`: categorical variable representing self-reported rating of participant's health in general: `Excellent`, `Vgood`, `Good`, `Fair`, `Poor`.
+9. `DaysPhysHlthBad`: numeric variable representing the self-reported number of days participant's physical health was not good out of the past 30 days.
+10. `DaysMentHlthBad`: numeric variable representing the self-reported number of days participant's mental health was not good out of the past 30 days.
+11. `LittleInterest`: categorical variable representing the self-reported number of days participant had little interest in doing things: `None`, `Several`, `Majority`,`AlmostAll`.
+12. `Depressed`: categorical variable representing the self-reported number of days participant felt down, depressed or hopeless: `None`, `Several`, `Majority`,`AlmostAll`.
+
+### Lifestyle Covariates
+
+13. `TVHrsDay`: categorical variable representing the self-reported average number of hours per day participant watched TV over the past 30 days: `0_to_1hr`, `1_hr`, `2_hr`, `3_hr`, `4_hr`, `More_4_hr`. 
+14. `CompHrsDay`: categorical variable representing the self-reported average number of hours per day participant used a computer or gamind device over the past 30 days: `0_to_1hr`, `1_hr`, `2_hr`, `3_hr`, `4_hr`, `More_4_hr`. 
+15. `AlcoholDay`: numeric variable representing the reported average number of drinks consumed on days that participant drank alcohol beverages.
+16. `SmokeNow`: binary variable ($Yes=1$, $No=0$) representing whether the participant currently smokes cigarettes regularly.
+17. `RegularMarij`: binary variable ($Yes=1$, $No=0$) representing whether the participant has been or is a regular marijuana user (used at least once a month for a year).
+18. `HardDrugs`: binary variable ($Yes=1$, $No=0$) representing whether the participant hs tried cocaine, crack cocaine, heroin or metamphetamine.
+
+## Summary Table
+
+- We filter the data to include participants that are 20 years or older since most of the covariates only provide data for that age group. We also focus on participants surveyed in the year 2011/2012 since there is no data for `TVHrsDay` and `CompHrsDay` for the year 2009/2010.
+
+- The participants who reported having smoked less than 100 cigarettes in their lifetime were recorded as `NA` in the study, we consider these participants as not currently smoking (i.e. `SmokeNow` = 0).
+
+- Finally, we remove duplicate rows; and the resulting observed data contains **2173 observations** with **20 variables**. 
+
+- The pre-processed data matrix is summarized below:
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(NHANES)
+
+obs.data.filtered <- NHANES[NHANES$Age >= 20 & NHANES$SurveyYr=='2011_12', c('ID','SurveyYr','PhysActive','SleepTrouble',
+                                       'Gender','Age','Race1','Education','MaritalStatus',
+                                       'HHIncomeMid', 'HomeOwn', 'HealthGen', 'DaysPhysHlthBad',
+                                       'DaysMentHlthBad', 'LittleInterest', 'Depressed', 'TVHrsDay',
+                                       'CompHrsDay', 'AlcoholDay','SmokeNow', 'RegularMarij', 'HardDrugs')]
+
+obs.data <- unique(obs.data.filtered) # remove duplicate rows
+
+# set NA to "No" for SmokeNow covariate
+na.smoke.idx <- which(is.na(obs.data$SmokeNow))
+obs.data$SmokeNow[na.smoke.idx] <- "No"
+
+# Display Summary stats
+summary(obs.data[,-c(1,2)])
+
+obs.data <- mutate(obs.data, PhysActive = ifelse(PhysActive == "Yes", 1, 0),
+                   SleepTrouble = ifelse(SleepTrouble == "Yes", 1, 0))
+save(obs.data, file = "obs_data.Rda")
+```
+
+
+# Anticipated Challenges
+
+1. **Missing Data**: we need to address the issue of missing data in our data set. This can be done either by imputing the missing variables, or by removing the rows containing `NA` altogether.
+
+2. **Computational Complexity**: we have many variables with multiple categories, so we expect computations to become heavy in the parameter estimation step. This can be dealt with either by dropping some covariates deemed non-influential, or by reducing the number of categories (i.e. merging multiple categories into one when it is justified). Another approach would be to perform parallel computations when possible to reduce the computational burden.
+
+3. **Justifying the causal assumptions**: in order to draw the associated Directed Acylcic Graph (DAG) for the study, we must make assumptions about the causal relationship between the different covariates, exposure and outcome. This is a more challenging task because of the relatively large number of covariates considered in the study, and the closeness of the relationship among them.
+
+# References
+
+[1] Pruim, Randall *"NHANES: Data from the US National Health and Nutrition Examination Study"* July 2, 2017. Retrieved from: `https://CRAN.R-project.org/package=NHANES`

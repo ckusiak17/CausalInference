@@ -1,0 +1,35 @@
+---
+title: "G-Comp"
+author: "Coco Kusiak"
+date: "12/6/2017"
+output: pdf_document
+---
+
+```{r}
+require(mosaic)
+load("obs_data.Rda")
+```  
+
+The Unadjusted Estimator:  
+
+$$\Psi^{un} = E_0(Y|A=1) - E_0(Y|A=0)$$
+
+```{r}  
+a0 <- filter(obs.data, PhysActive == 0)
+a1 <- filter(obs.data, PhysActive == 1)
+E_a0 <- mean(a0$SleepTrouble)
+E_a1 <- mean(a1$SleepTrouble)
+psi_un <- E_a1 - E_a0
+psi_un
+```
+
+
+The G-Computation formula in the context of our problem is:  
+$$\Psi(P_0) = E_0[E_0(Y|A=1, W) - E_0(Y|A=0,W)]$$  
+
+We need to condition on $W_d$, $W_h$, and $W_l$ in order for the backdoor criterion to hold and for our target parameter to be identifiable.  
+
+```{r}
+
+```
+
