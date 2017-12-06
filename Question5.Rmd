@@ -1,6 +1,6 @@
 ---
 title: "G-Comp"
-author: "Coco Kusiak"
+author: "Coco Kusiak, Hachem Saddiki, and Krishna Vemuri"
 date: "12/6/2017"
 output: pdf_document
 ---
@@ -10,26 +10,125 @@ require(mosaic)
 load("obs_data.Rda")
 ```  
 
-The Unadjusted Estimator:  
+#The Unadjusted Estimator  
 
 $$\Psi^{un} = E_0(Y|A=1) - E_0(Y|A=0)$$
 
 ```{r}  
-a0 <- filter(obs.data, PhysActive == 0)
-a1 <- filter(obs.data, PhysActive == 1)
-E_a0 <- mean(a0$SleepTrouble)
-E_a1 <- mean(a1$SleepTrouble)
+obs.gcomp <- obs.data[complete.cases(obs.data),]
+a0 <- filter(obs.gcomp, PhysActive == 0)
+a1 <- filter(obs.gcomp, PhysActive == 1)
+E_a0 <- mean(as.numeric(a0$SleepTrouble))
+E_a1 <- mean(as.numeric(a1$SleepTrouble))
 psi_un <- E_a1 - E_a0
 psi_un
 ```
 
+#The Parametric G-Computation Estimator  
 
 The G-Computation formula in the context of our problem is:  
 $$\Psi(P_0) = E_0[E_0(Y|A=1, W) - E_0(Y|A=0,W)]$$  
 
 We need to condition on $W_d$, $W_h$, and $W_l$ in order for the backdoor criterion to hold and for our target parameter to be identifiable.  
 
+
+
+##"Saturated" Regression Implementation
+
+
 ```{r}
+psi.P0 <- (mean(obs.gcomp$SleepTrouble[obs.gcomp$PhysActive == "1" & obs.data$Gender == "female" & obs.gcomp$HardDrugs == "Yes" & obs.gcomp$HealthGen == "Excellent"]))
+```
+
+
+
+```{r}
+saturated <- glm(SleepTrouble ~ PhysActive + Age + Gender + Race1 + Education + MaritalStatus + HHIncomeMid + HomeOwn +
+      HealthGen + DaysPhysHlthBad + DaysMentHlthBad + LittleInterest + Depressed + TVHrsDay + 
+      CompHrsDay + AlcoholDay + SmokeNow + RegularMarij + HardDrugs, 
+    data = obs.gcomp, family = "binomial")
+
+summary(saturated)
+less_saturated <- glm(SleepTrouble ~ PhysActive + Age + Gender + Race1 + 
+      HealthGen + DaysPhysHlthBad + DaysMentHlthBad + HardDrugs, 
+    data = obs.gcomp, family = "binomial")
+summary(less_saturated)
 
 ```
+
+```{r}
+txt <- mutate(obs.gcomp, PhysActive = "1")
+control <- mutate(obs.gcomp, PhysActive = "0")
+
+predict.txt <- predict(saturated, newdata = txt, type = 'response')
+predict.control <- predict(saturated, newdata = control, type = 'response')
+obs.gcomp <- mutate(obs.gcomp, txt = predict.txt, control = predict.control)
+mean(predict.txt - predict.control)
+```
+
+```{r}
+R <- 500
+n <- 200
+
+estimates <- matrix(nrow = R, ncol = 3)
+for (r in 1:R){
+  obs <- sample(x = obs.gcomp, size = n, replace = FALSE)
+  txt <- mutate(obs, PhysActive = "1")
+  control <- mutate(obs, PhysActive = "0")
+  
+  model1 <-  glm(SleepTrouble ~ PhysActive + Age + Gender + Race1 + Education + MaritalStatus + HHIncomeMid + HomeOwn +
+      HealthGen + DaysPhysHlthBad + DaysMentHlthBad + LittleInterest + Depressed + TVHrsDay + 
+      CompHrsDay + AlcoholDay + SmokeNow + RegularMarij + HardDrugs, 
+    data = obs, family = "binomial")
+  model2 <- glm(SleepTrouble ~ PhysActive + Age + Gender + Race1 + 
+      HealthGen + DaysPhysHlthBad + DaysMentHlthBad + HardDrugs, 
+    data = obs, family = "binomial")
+  model3 <- glm(SleepTrouble ~ PhysActive, data = obs, family = "binomial")
+  
+  Q1w.1 <- predict(model1, newdata = txt, type = 'response')
+  Q1w.2 <- predict(model2, newdata = txt, type = 'response')
+  Q1w.3 <- predict(model3, newdata = txt, type = 'response')
+  Q0w.1 <- predict(model1, newdata = control, type = 'response')
+  Q0w.2 <- predict(model2, newdata = control, type = 'response')
+  Q0w.3 <- predict(model3, newdata = control, type = 'response')
+  
+  psi.hat1 <- mean(Q1w.1 - Q0w.1)
+  psi.hat2 <- mean(Q1w.2 - Q0w.2)
+  psi.hat3 <- mean(Q1w.3 - Q0w.3)
+  
+  estimates[r,] <- c(psi.hat1, psi.hat2, psi.hat3)
+}
+```  
+
+```{r}
+perform <- function(){}
+```
+
+
+
+
+
+
+
+
+
+#IPTW  
+
+
+
+
+
+
+
+
+
+
+
+
+
+#TMLE  
+
+
+
+
 

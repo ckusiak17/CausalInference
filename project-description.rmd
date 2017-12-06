@@ -84,8 +84,9 @@ obs.data$SmokeNow[na.smoke.idx] <- "No"
 # Display Summary stats
 summary(obs.data[,-c(1,2)])
 
-obs.data <- mutate(obs.data, PhysActive = ifelse(PhysActive == "Yes", 1, 0),
-                   SleepTrouble = ifelse(SleepTrouble == "Yes", 1, 0))
+obs.data <- mutate(obs.data, PhysActive = as.factor(ifelse(PhysActive == "Yes", 1, 0)),
+                   SleepTrouble = as.factor(ifelse(SleepTrouble == "Yes", 1, 0)))
+obs.data <- subset(obs.data, select =  - c(ID, SurveyYr))
 save(obs.data, file = "obs_data.Rda")
 ```
 
