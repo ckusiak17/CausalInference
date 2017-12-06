@@ -98,16 +98,11 @@ for (r in 1:R){
   
   estimates[r,] <- c(psi.hat1, psi.hat2, psi.hat3)
 }
+
+mean.psi1 <- mean(estimates[,1])
+mean.psi2 <- mean(estimates[,2])
+mean.psi3 <- mean(estimates[,3])
 ```  
-
-```{r}
-perform <- function(){}
-```
-
-
-
-
-
 
 
 
