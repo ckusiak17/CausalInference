@@ -32,12 +32,6 @@ $$\Psi(P_0) = E_0[E_0(Y|A=1, W) - E_0(Y|A=0,W)]$$
 We need to condition on $W_d$, $W_h$, and $W_l$ in order for the backdoor criterion to hold and for our target parameter to be identifiable.  
 
 
-
-##"Saturated" Regression Implementation
-
-
-
-
 ```{r models}
 greatest <- glm(SleepTrouble ~ PhysActive + Age + Gender + Race1 + Education + MaritalStatus + HHIncomeMid + HomeOwn +
       HealthGen + DaysPhysHlthBad + DaysMentHlthBad + LittleInterest + Depressed + TVHrsDay + 
