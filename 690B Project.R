@@ -1,6 +1,3 @@
-setwd('D:/Academics/690B Fall 2017')
-install.packages('mosaic')
-library(mosaic)
 library(ltmle)
 library(SuperLearner)
 load("obs_data.Rda")
