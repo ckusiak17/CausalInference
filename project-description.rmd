@@ -75,19 +75,36 @@ obs.data.filtered <- NHANES[NHANES$Age >= 20 & NHANES$SurveyYr=='2011_12', c('ID
                                        'DaysMentHlthBad', 'LittleInterest', 'Depressed', 'TVHrsDay',
                                        'CompHrsDay', 'AlcoholDay','SmokeNow', 'RegularMarij', 'HardDrugs')]
 
+obs.data.filtered <- NHANES[NHANES$Age >= 20, c('ID','SurveyYr','PhysActive','SleepTrouble',
+                                       'Gender','Age','Race1','Education','MaritalStatus',
+                                       'HHIncomeMid', 'HomeOwn', 'HealthGen', 'DaysPhysHlthBad',
+                                       'DaysMentHlthBad', 'LittleInterest', 'Depressed', 'AlcoholDay','SmokeNow', 'RegularMarij', 'HardDrugs')]
+
 obs.data <- unique(obs.data.filtered) # remove duplicate rows
 
 # set NA to "No" for SmokeNow covariate
 na.smoke.idx <- which(is.na(obs.data$SmokeNow))
 obs.data$SmokeNow[na.smoke.idx] <- "No"
 
-# Display Summary stats
-summary(obs.data[,-c(1,2)])
+obs.data.mat <- as.matrix(obs.data)
+# set NA to "undisclosed" for rest of columns
+for(c in 1:ncol(obs.data.mat)){
+  tmp <- is.na(obs.data.mat[,c])
+  if(sum(tmp) > 0){
+    obs.data.mat[tmp,c] <- "Undisc."
+  }
+}
 
-obs.data <- mutate(obs.data, PhysActive = as.factor(ifelse(PhysActive == "Yes", 1, 0)),
-                   SleepTrouble = as.factor(ifelse(SleepTrouble == "Yes", 1, 0)))
+obs.data.df <- as.data.frame(obs.data.mat)
+# Display Summary stats
+summary(obs.data.df[,-c(1,2)])
+
+obs.data.df <- mutate(obs.data.df, PhysActive = as.factor(ifelse(PhysActive == "Yes", 1, 0)),
+                   SleepTrouble = as.factor(ifelse(SleepTrouble == "Yes", 1, 0)),
+                   Gender = as.factor(ifelse(Gender == "female", 0, 1)),
+                   SmokeNow = as.factor(ifelse(SmokeNow == "Yes", 1, 0)))
 obs.data <- subset(obs.data, select =  - c(ID, SurveyYr))
-save(obs.data, file = "obs_data.Rda")
+save(obs.data, file = "obs_data_v2.Rda")
 ```
 
 
