@@ -61,6 +61,22 @@ smaller2<- glm(SleepTrouble ~ PhysActive + Age + Gender + Race1 +
     data = obs.gcomp2, family = "binomial")
 summary(smaller2)
 
+
+ObsData <- mutate(ObsData, PhysActive = as.numeric(PhysActive))
+project<- glm(SleepTrouble ~ . - DaysMentHlthBad - DaysPhysHlthBad, 
+    data = ObsData, family = "binomial")
+summary(project)
+
+
+txt <- mutate(ObsData, PhysActive = 1)
+control <- mutate(ObsData, PhysActive = 0)
+
+predict.txt.g <- predict(project, newdata = txt, type = 'response')
+predict.control.g <- predict(project, newdata = control, type = 'response')
+obs.gcomp <- mutate(ObsData, txt = predict.txt.g, control = predict.control.g)
+psi.greatest <- mean(predict.txt.g - predict.control.g)
+psi.greatest
+
 ```
 
 ```{r iteration_1}
@@ -71,6 +87,7 @@ predict.txt.g <- predict(greatest, newdata = txt, type = 'response')
 predict.control.g <- predict(greatest, newdata = control, type = 'response')
 obs.gcomp <- mutate(obs.gcomp, txt = predict.txt.g, control = predict.control.g)
 psi.greatest <- mean(predict.txt.g - predict.control.g)
+psi.greatest
 
 predict.txt.s <- predict(smaller, newdata = txt, type = 'response')
 predict.control.s <- predict(smaller, newdata = control, type = 'response')
