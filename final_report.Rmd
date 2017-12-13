@@ -1,0 +1,102 @@
+---
+title: "The Effect of Physical Activity on Sleep"
+author: "Coco Kusiak, Hachem Saddiki, and Krishna Vemuri"
+date: "12/12/2017"
+toc: TRUE
+number_sections: TRUE
+bibliography: bibliography.bib
+output: pdf_document
+---
+
+\pagebreak  
+
+#The Data
+
+#Step 0: Specify the Scientific Question  
+
+##Background  
+
+50-70 million Americans have chronic sleep problems and 35.5% of adults report getting less than 7 hours of sleep a day[@cdc].  Everyone knows the implications of not getting enough sleep. It has been linked to many health problems such as obesity, mood disorders, and heart disease[@wgbh]. Getting a good night’s sleep gives the body the necessary time to recover and is shown to improve memory[@wgbh2]. People across the country test herbal supplements, meditation and prescription drugs to fight insomnia. However, some studies have shown that exercise alone can help improve the quality of sleep[@sleepfoundation]. We set out to examine this relationship and see if exercise does indeed cause better sleep quality.  
+
+
+##Scientific Question and Target Population  
+
+Among American adults aged 20 years or older, how does participating in
+moderate or vigorous-intensity sports, fitness or recreational activities affect quality of sleep?
+
+
+
+
+#Step 1: Specify the Causal Model    
+
+##Option 1  
+
+Our endogenous variables are X = {W, A, Y} which are defined as:  
+
+W= {$W_d, W_h, W_l$}  
+$W_d$ = {Gender, Age, Race1, Education, MaritalStatus, HHIncomeMid, HomeOwn}  
+$W_h$ = {HealthGen, DaysPhysHlthBad, DaysMentHlthBad, LittleInterest, Depressed}  
+$W_l$ = {TVHrsDay, CompHrsDay, AlcoholDay, SmokeNow, RegularMarij, HardDrugs}  
+A = {PhysActive}  
+Y = {SleepTrouble}    
+
+Our exogenous variables are U = ${U_{W_d}, U_{W_h}, U_{W_l}, U_A, U_Y} ~ P_U$. These are the unmeasured factors which influence what values our endogenous variables, X can take. 
+
+Our structural causal model is defined as:
+
+$W_d = f_{W_d}(U_{W_d})$  
+$W_h = f_{W_h}(W_d, U_{W_h})$  
+$W_l = f_{W_l}(W_d, W_h, U_{W_l})$  
+$A = f_A(W_d, W_h, W_l, U_A)$  
+$Y = f_Y(W_d, W_h, W_l, A, U_Y)$    
+
+A directed acyclic graph displays this SCM below.  
+
+![Structural Causal Model Option 1.](step1_option1.png)  
+
+##Option 2  
+
+Our endogenous variables X = {W, A, Z, Y} which are defined as:
+
+W = {$W_d, W_h, W_l$}  
+$W_d$ = {Gender, Age, Race1, Education, MaritalStatus, HHIncomeMid, HomeOwn}  
+$W_h$ = {HealthGen, DaysPhysHlthBad, DaysMentHlthBad, LittleInterest}  
+$W_l$ = {TVHrsDay, CompHrsDay, AlcoholDay, SmokeNow, RegularMarij, HardDrugs}  
+A = {PhysActive}  
+Z = {Depressed}  
+Y = {SleepTrouble}  
+
+Our exogenous variables are U = {$U_{W_d}, U_{W_h}, U_{W_l}, U_A, U_Z U_Y$} $\sim P_U$. These are the unmeasured factors which influence what values our endogenous variables, X can take. 
+
+Our structural causal model is defined as:
+
+$W_d = f_{W_d}(U_{W_d})$  
+$W_h = f_{W_h}(W_d, U_{W_h})$  
+$W_l = f_{W_l}(W_d, W_h, U_{W_l})$  
+$A = f_A(W_d, W_h, W_l, U_A)$  
+$Z = f_Z(W_d, W_h, W_l, A, U_Z)$  
+$Y = f_Y(W_d, W_h, W_l, A, Z, U_Y)$  
+
+A directed acyclic graph displays this SCM below.   
+
+![Structural Causal Model Option 2.](step1_option2.png)  
+
+This alternative model defines Depressed as an intermediary between the exposure and outcome. Both models are valid, however we will proceed with the first model in the following analyses.  
+
+
+#Step 2: Translation in the Target Causal Parameter Using Counterfactuals  
+
+#Step 3: Specify the Observed Data and its Link  
+
+#Step 4: Indentifiability  
+
+#Step 5: The Statistical Model and Estimand  
+
+#Step 6: Estimation  
+
+#Step 7: Interpretation  
+
+# References  
+
+
+
