@@ -10,19 +10,23 @@ output: pdf_document
 
 \pagebreak  
 
-#The Data
 
 #Step 0: Specify the Scientific Question  
 
 ##Background  
 
-50-70 million Americans have chronic sleep problems and 35.5% of adults report getting less than 7 hours of sleep a day[@cdc].  Everyone knows the implications of not getting enough sleep. It has been linked to many health problems such as obesity, mood disorders, and heart disease[@wgbh]. Getting a good night’s sleep gives the body the necessary time to recover and is shown to improve memory[@wgbh2]. People across the country test herbal supplements, meditation and prescription drugs to fight insomnia. However, some studies have shown that exercise alone can help improve the quality of sleep[@sleepfoundation]. We set out to examine this relationship and see if exercise does indeed cause better sleep quality.  
+50-70 million Americans have chronic sleep problems and 35.5% of adults report getting less than 7 hours of sleep a day [@cdc].  Everyone knows the implications of not getting enough sleep. It has been linked to many health problems such as obesity, mood disorders, and heart disease [@wgbh]. Getting a good night’s sleep gives the body the necessary time to recover and is shown to improve memory [@wgbh2]. People across the country test herbal supplements, meditation and prescription drugs to fight insomnia. However, some studies have shown that exercise alone can help improve the quality of sleep [@sleepfoundation]. We set out to examine this relationship and see if exercise does indeed cause better sleep quality.  
 
+
+##The Data
+
+Our data come from the National Health and Nutrition Examination Survey conducted by the US National Center for Health Statistics and can found in the `NHANES` package in R. These data were collected between the years of 2009 and 2012 across the United States. It includes information on a variety of diseases, medical conditions, and health indicators. The original set has 76 variables and 10,000 observations [@nhanes].  
+
+The `NHANES` includes duplicate rows in order to fix problems associated with oversampling. We decided to remove these duplicates. We also ran a series of stepwise regressions to identify key covariates. After these reductions, we have a final dataset with 10 variables and 4,654 observations. Unfortunately, although this dataset has information on multiple years, the participants all have unique identifiers and thus can not be analyzed in a longitudinal setting. `NA`s were transformed as factor levels labeled as "Undisclosed."  
 
 ##Scientific Question and Target Population  
 
-Among American adults aged 20 years or older, how does participating in
-moderate or vigorous-intensity sports, fitness or recreational activities affect quality of sleep?
+Among American adults aged 20 years or older, how does participating in moderate or vigorous-intensity sports, fitness or recreational activities affect sleep quality?
 
 
 
