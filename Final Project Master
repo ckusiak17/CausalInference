@@ -236,7 +236,7 @@ We will define $\hat{\bar{Q}}(Y|A,W) = logit^{-1} (\beta_0+ \beta_1PhysAcitve + 
 
 
 
-```{r}
+```{r, cache = TRUE}
 model <- glm(SleepTrouble ~ ., 
     data = ObsData, family = "binomial")
 #summary(model)
@@ -337,7 +337,7 @@ names(Qbar.star)<- c('QbarAW.star', 'Qbar1W.star', 'Qbar0W.star')
 ```
 ##Non-Parametric Bootstrap    
 
-```{r interations_500}
+```{r interations_500, cache = TRUE}
 R <- 500
 n <- 200
 
@@ -368,14 +368,18 @@ var.psi1
 
 
 
-
 #Step 7: Interpretation 
 
-The results of the analysis present some evidence suggesting the existence of an association  between self-reported participation in moderate to vigorous physical activity and self-reported disturbances in sleep. The unadjusted estimator, estimating the difference in the risk of reporting disturbed sleep between those reporting engaging in moderate to vigorous physical activity and those who did not was approximately -2.53%, not adjusting for any confounders in the data, suggesting that engaging in moderate to vigorous physical activity lowers the chances of disturbed sleep. These results are, somewhat counterintuitively, reversed after adjusting for common confounders, including demographic variables and variables measuring physical health status, mental health status and TV and computer habits. After adjustment, the simple substitution estimator, estimated by assuming a parametric relationship between the exposure and the outcome, suggested that this difference in the probability of reporting disturbed sleep is approximately +2.8%. 
-The results from all three estimators, the simple substitution estimator, IPTW and TMLE were approximately similar. The difference in the probability of reporting disturbed sleep was estimated to be approximately 2.34% with TMLE and 2.93% with IPTW using SuperLearner, further corroborating the result from the parametric simple substitution estimator. 
+The results of the analysis present some evidence suggesting the existence of an association  between self-reported participation in moderate to vigorous physical activity and self-reported disturbances in sleep. The unadjusted estimator, estimating the difference in the risk of reporting disturbed sleep between those reporting engaging in moderate to vigorous physical activity and those who did not was approximately -2.53%, not adjusting for any confounders in the data, suggesting that engaging in moderate to vigorous physical activity lowers the chances of disturbed sleep. These results are, somewhat counterintuitively, reversed after adjusting for common confounders, including demographic variables and variables measuring physical health status, mental health status and TV and computer habits. After adjustment, the simple substitution estimator, estimated by assuming a parametric relationship between the exposure and the outcome, suggested that this difference in the probability of reporting disturbed sleep is approximately **+2.8%**. 
+
+The results from all three estimators, the simple substitution estimator, IPTW and TMLE were approximately similar. The difference in the probability of reporting disturbed sleep was estimated to be approximately 2.34% with TMLE and 2.93% with IPTW using SuperLearner, further corroborating the result from the parametric simple substitution estimator. These results are also supported by the results from the non-parametric bootstrap, which suggests that the 'true' difference in the probability is approximately `r round(mean.psi1,3)*100`%.
+
 In the context of the structural causal model, the results can be interpreted as the difference in counterfactual probability of reporting disturbed sleep when all the participants, possible contrary to fact, engage in physical activity, compared to the counterfactual scenario where none of the participants engage in physical activity. In order to interpret the results in the context of our causal model, the randomization assumption made regarding the absence of unmeasured common factors between physical activity and disturbed sleep patterns needs to be met. In addition, there must be no common unmeasured confounders between either the covariates and the exposure, physical activity, or between the covariates and the outcome, disturbed sleep. These assumptions are impossible to confirm or refute under the conditions in which the data was collected, thus limiting the interpretation of a causal association between physical activity and sleep patterns. One way to improve the plausibility of this causal association is to delineate more accurately the covariates which have been shown to have a causal effect on sleep trouble, through a detailed literature search. Limiting the analysis to these covariates and examining their association would strengthen the association observed and reported in this analysis.
 
-Interpretation of the statistical and causal associations observed in this analysis is also hampered by a few limitations. First, the data we analyzed consists of self-reported data. The data was collected through a self-administered online questionnaire, from volunteers across the country. This leads to a possibility of recall bias affecting the final statistical association, with respondents inaccurately reporting their physical activity and sleep habits, or failing to disclose information on other, sensitive, covariates which might affect the outcome. The problem of missing data also affected the analysis. Even after limiting the data to one survey year (2009), significant amounts of missing data were found. More than half of the responses lacked data on at least one variable; only 982 out of 2173 unique responses (45.2%) had complete data available on all covariates. Yet another problem with missing data is the lack of support for a number covariate combinations, and the possibility of a ‘practical’ violation of the positivity assumption. Our solution, in order to simplify the analysis in the interest of time, was to label all the missing data as ‘undisclosed’, and drop all the variables that did not show a statistical association with the outcome. However, the drawback of this approach is a loss in study power, eliminating almost 55% of the observations. This approach also has no basis or precedence in causal logic and impedes our ability to test the causal association of a number of factors, irrespective of their individual statistical association with the outcome. 
+Interpretation of the statistical and causal associations observed in this analysis is hampered by a few limitations. First, the data we analyzed consists of self-reported data. The data was collected through a self-administered online questionnaire, from volunteers across the country. This leads to a possibility of recall bias affecting the final statistical association, with respondents inaccurately reporting their physical activity and sleep habits, or failing to disclose information on other, sensitive, covariates which might affect the outcome. 
+
+The problem of missing data also affected the analysis. Even after limiting the data to one survey year (2009), significant amounts of missing data were found. More than half of the responses lacked data on at least one variable; only 982 out of 2173 unique responses (45.2%) had complete data available on all covariates. Yet another problem with missing data is the lack of support for a number covariate combinations, and the possibility of a ‘practical’ violation of the positivity assumption. Our solution, in order to simplify the analysis in the interest of time, was to label all the missing data as ‘undisclosed’, and drop all the variables that did not show a statistical association with the outcome. However, the drawback of this approach is a loss in study power, eliminating almost 55% of the observations. This approach also has no basis or precedence in causal logic and impedes our ability to test the causal association of a number of factors, irrespective of their individual statistical association with the outcome. 
+
 The results of this analysis, as they stand, significantly curb application in a real world setting, by affecting the generalizability and application in possible policy decisions, the development of a feasible, real world intervention, or even in understanding the relationship between physical activity and sleep patterns.. As observed earlier, a few steps to improve the analysis, and the plausibility of the results, would be: 
 
 1) Ground the causal structural model in the real world by identifying as many of the real world relationships between the exposure, outcome and possible confounders in order to develop a feasible intervention based on the results
@@ -384,13 +388,12 @@ The results of this analysis, as they stand, significantly curb application in a
 
 3) Application of other algorithms in the SuperLearner library to improve SuperLearner prediction efficiency.
 
+# References
 
-# References 
-
-#Appendix
+# Appendix
 Evaluating the performance of the SuperLearner algorithm, compared to other parametric/semi-parametric algorithms.
 
-```{r, message=F, warning=F,echo=F}
+```{r, message=F, warning=F,echo=F, cache = TRUE}
 CV.Sl.out <- CV.SuperLearner(Y = ObsData$SleepTrouble,
                              X = X,
                              V = 10,
@@ -400,3 +403,5 @@ summary(CV.Sl.out)
 ```
 
 The results suggest that the SuperLearner algorithm has the lowest "honest" cross-validated risk among all the algorithms selected in the SuperLearner library.
+
+ 
